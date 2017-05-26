@@ -13,6 +13,14 @@ public class Fly : MonoBehaviour
     [Range(10, 20)]
     public float flyingPower = 15;
 
+
+    //Rotatos
+    public float rotX;
+    public float velY;
+    public float rotateFallSpeed;
+    public float rotateClimbSpeed;
+    public int maxAngle;
+
     // Use this for initialization
     void Start()
     {
@@ -20,6 +28,7 @@ public class Fly : MonoBehaviour
     }
     void Update()
     {
+        velY = rigid.velocity.y;
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
            // Pop();
@@ -27,10 +36,47 @@ public class Fly : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
         {
             Rise();
+            orientation(false);
+            return;
         }
         else
         {
+            //orientation(true);
             rigid.drag = dragGliding;
+        }
+        if(velY >= 0)
+        {
+            orientation(false);
+        }
+        else
+        {
+            orientation(true);
+        }
+    }
+
+    public void orientation(bool isDownward)
+    {
+        if (isDownward)
+        {
+            float speed = rotateFallSpeed;
+            if (rotX > maxAngle)
+            {
+                rotX = maxAngle;
+            }
+            if (rotX <0)
+            {
+                speed *= 2;
+            }
+            Vector3 dir = new Vector3(rotX += speed, 0, 0);
+            transform.rotation = Quaternion.Euler(dir);
+        } else
+        {
+            if (rotX < -maxAngle)
+            {
+                rotX = -maxAngle;
+            }
+            Vector3 dir = new Vector3(rotX -= rotateClimbSpeed, 0, 0);
+            transform.rotation = Quaternion.Euler(dir);
         }
     }
     void Pop()
